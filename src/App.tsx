@@ -8,41 +8,54 @@ import svgPathsPeek from "./imports/svg-9ldm9562u5";
 // [핵심 수정] 에러가 나던 일반 이미지 경로를 지우고, 
 // 피그마에서 원래 잘 작동하던 'figma:asset' 경로를 사용합니다.
 import imgCard4 from "figma:asset/7f12ea1300756f144a0fb5daaf68dbfc01103a46.png";
-// Peek 페이지 왼쪽 카드 이미지 (Smart Routine 카드)
-import imgPeekCard0 from "figma:asset/smart-routine-card.png";
-// Pick 페이지 첫 번째 카드 앞면 이미지
-import imgPickCard1Front from "figma:asset/pick_card_1_front.png";
+
+// Pick 페이지 카드 이미지 import
+import pickFront1 from "figma:asset/pick_front_1.png";
+import pickBack1 from "figma:asset/pick_back_1.png";
+import pickFront2 from "figma:asset/pick_front_2.png";
+import pickBack2 from "figma:asset/pick_back_2.png";
+import pickFront3 from "figma:asset/pick_front_3.png";
+import pickBack3 from "figma:asset/pick_back_3.png";
+
+// Peek 페이지 카드 이미지 import
+import peekFront1 from "figma:asset/peek_front_1.png";
+import peekBack1 from "figma:asset/peek_back_1.png";
+import peekFront2 from "figma:asset/peek_front_2.png";
+import peekBack2 from "figma:asset/peek_back_2.png";
+import peekFront3 from "figma:asset/peek_front_3.png";
+import peekBack3 from "figma:asset/peek_back_3.png";
 
 // Pick 페이지 카드 이미지 설정 (각 카드별 앞면/뒷면 이미지)
-// 이미지를 추가하려면 src/assets 폴더에 이미지를 추가하고 아래 경로를 업데이트하세요
-const pickCardImages = [
+// 숫자 1 = 가장 왼쪽 (index 0), 2 = 가운데 (index 1), 3 = 가장 오른쪽 (index 2)
+const pickCardImages: CardImage[] = [
   {
-    front: imgPickCard1Front, // 카드 1 앞면 이미지
-    back: imgCard4,  // 카드 1 뒷면 이미지 - 다른 이미지로 변경 가능
+    front: pickFront1, // 카드 1 (가장 왼쪽) 앞면 이미지
+    back: pickBack1,   // 카드 1 (가장 왼쪽) 뒷면 이미지
   },
   {
-    front: imgCard4, // 카드 2 앞면 이미지 - 다른 이미지로 변경 가능
-    back: imgCard4,  // 카드 2 뒷면 이미지 - 다른 이미지로 변경 가능
+    front: pickFront2, // 카드 2 (가운데) 앞면 이미지
+    back: pickBack2,   // 카드 2 (가운데) 뒷면 이미지
   },
   {
-    front: imgCard4, // 카드 3 앞면 이미지 - 다른 이미지로 변경 가능
-    back: imgCard4,  // 카드 3 뒷면 이미지 - 다른 이미지로 변경 가능
+    front: pickFront3, // 카드 3 (가장 오른쪽) 앞면 이미지
+    back: pickBack3,   // 카드 3 (가장 오른쪽) 뒷면 이미지
   },
 ];
 
 // Peek 페이지 카드 이미지 설정 (각 카드별 앞면/뒷면 이미지)
-const peekCardImages = [
+// 숫자 1 = 가장 왼쪽 (index 0), 2 = 가운데 (index 1), 3 = 가장 오른쪽 (index 2)
+const peekCardImages: CardImage[] = [
   {
-    front: imgPeekCard0, // 가장 왼쪽 카드 (index 0) 앞면 이미지
-    back: imgCard4,  // 가장 왼쪽 카드 뒷면 이미지 (기존 이미지 유지)
+    front: peekFront1, // 카드 1 (가장 왼쪽) 앞면 이미지
+    back: peekBack1,   // 카드 1 (가장 왼쪽) 뒷면 이미지
   },
   {
-    front: imgCard4, // 카드 2 앞면 이미지
-    back: imgCard4,  // 카드 2 뒷면 이미지
+    front: peekFront2, // 카드 2 (가운데) 앞면 이미지
+    back: peekBack2,   // 카드 2 (가운데) 뒷면 이미지
   },
   {
-    front: imgCard4, // 카드 3 앞면 이미지
-    back: imgCard4,  // 카드 3 뒷면 이미지
+    front: peekFront3, // 카드 3 (가장 오른쪽) 앞면 이미지
+    back: peekBack3,   // 카드 3 (가장 오른쪽) 뒷면 이미지
   },
 ];
 
@@ -51,11 +64,16 @@ const peekCardImages = [
 // ============================================================================
 const DRAG_THRESHOLD = 50; 
 const IDLE_TIMEOUT = 60000; // 60초
-const FLIP_DURATION = 0.6; 
-const FLIP_DELAY = 0.1; 
+// 카드 플립 애니메이션 설정 (0.8초로 통일)
+const FLIP_DURATION = 0.8; // 카드 플립 애니메이션 지속 시간 (모든 카드 동일, 딜레이 없음)
+const FLIP_RESET_DURATION = 0.8; // 카드 리셋 애니메이션 지속 시간 (모든 카드 동일, 딜레이 없음)
+const FLIP_DELAY = 0; // 카드 플립 시작 지연 시간 (딜레이 없음)
+const FLIP_OLD_CARD_RESET_DELAY = 0; // 새 카드 선택 후 기존 카드 리셋 딜레이 (딜레이 없음, 동시 실행)
 const DRAG_TRANSITION_DELAY = 400; // 드래그 전환 후 카드 리셋 지연 시간 (ms)
 
-// TV 최적화 곡선
+// 부드러운 애니메이션 곡선 (ease-in-out-cubic: 더 부드럽고 자연스러운 전환)
+const EASE_SMOOTH = [0.4, 0.0, 0.6, 1] as const; // ease-in-out-cubic (시작과 끝이 모두 부드러움)
+// TV 최적화 곡선 (기존)
 const EASE_TV = [0.25, 0.1, 0.25, 1] as const;
 
 // 타입 정의
@@ -294,8 +312,22 @@ function PeekContent({ isActive, selectedCard, setSelectedCard }: ContentProps) 
     { left: 'calc(50% + 529.07 / 1692 * 100%)', time: '02:00 Left', width: 'calc(211.819 / 1692 * 100%)' }
   ], []);
 
+  const prevSelectedCardRef = useRef<number | null>(null);
+  
+  // selectedCard 변경 추적
+  useEffect(() => {
+    prevSelectedCardRef.current = selectedCard;
+  }, [selectedCard]);
+
   const handleCardClick = useCallback((index: number) => {
-    setSelectedCard(selectedCard === index ? null : index);
+    if (selectedCard === index) {
+      // 같은 카드를 다시 클릭하면 바로 닫기
+      setSelectedCard(null);
+    } else {
+      // 새 카드를 먼저 선택 (즉시 플립 시작)
+      setSelectedCard(index);
+      // 기존 카드는 transition의 delay로 자연스럽게 늦게 리셋됨
+    }
   }, [selectedCard, setSelectedCard]);
 
   return (
@@ -338,6 +370,8 @@ function PeekContent({ isActive, selectedCard, setSelectedCard }: ContentProps) 
         {/* Cards */}
         {cardPositions.map((position, index) => {
           const isSelected = selectedCard === index;
+          const wasPreviouslySelected = prevSelectedCardRef.current === index;
+          const isResetting = !isSelected && wasPreviouslySelected;
           const cardImages = peekCardImages[index] || { front: imgCard4, back: imgCard4 };
           return (
             <motion.div 
@@ -354,7 +388,11 @@ function PeekContent({ isActive, selectedCard, setSelectedCard }: ContentProps) 
                 perspective: '1000px', 
               }} 
               animate={{ scale: isSelected ? 1.14 : 1, x: '-50%' }} 
-              transition={{ duration: FLIP_DURATION, ease: EASE_TV, delay: isSelected ? FLIP_DELAY : 0 }} 
+              transition={{ 
+                duration: isSelected ? FLIP_DURATION : FLIP_RESET_DURATION, 
+                ease: EASE_SMOOTH, 
+                delay: isSelected ? FLIP_DELAY : (isResetting ? FLIP_OLD_CARD_RESET_DELAY : 0)
+              }} 
               onClick={() => handleCardClick(index)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -371,7 +409,11 @@ function PeekContent({ isActive, selectedCard, setSelectedCard }: ContentProps) 
                 className="absolute inset-0" 
                 style={{ borderRadius: 'calc(16.483 / 1920 * 100vw)', transformStyle: 'preserve-3d' }} 
                 animate={{ rotateY: isSelected ? 180 : 0 }} 
-                transition={{ duration: FLIP_DURATION, ease: EASE_TV, delay: isSelected ? FLIP_DELAY : 0 }}
+                transition={{ 
+                  duration: isSelected ? FLIP_DURATION : FLIP_RESET_DURATION, 
+                  ease: EASE_SMOOTH, 
+                  delay: isSelected ? FLIP_DELAY : (isResetting ? FLIP_OLD_CARD_RESET_DELAY : 0)
+                }}
               >
                 {/* 카드 앞면 이미지 */}
                 <ImageWithErrorHandler 
@@ -398,7 +440,7 @@ function PeekContent({ isActive, selectedCard, setSelectedCard }: ContentProps) 
         {/* Time Labels */}
         {cardPositions.map((position, index) => (
           <motion.div key={`time-${index}`} className="absolute content-stretch flex items-center justify-center px-[2.05%] py-0" style={{ height: 'calc(57 / 1080 * 100%)', left: position.left, top: 'calc(941.5 / 1080 * 100%)', transform: 'translateX(-50%)', width: position.width, borderRadius: 'calc(41.584 / 1920 * 100vw)' }} animate={{ backgroundColor: selectedCard === index ? '#000000' : '#ffffff' }} transition={{ duration: 0.3, delay: selectedCard === index ? FLIP_DELAY : 0 }}>
-            <div aria-hidden="true" className="absolute border-black border-solid inset-0 pointer-events-none" style={{ borderWidth: 'calc(1.75 / 1920 * 100vw)', borderRadius: 'calc(41.584 / 1920 * 100vw)' }} /><motion.p className="leading-[2] not-italic relative shrink-0 text-nowrap tracking-[-0.016vw] whitespace-pre" style={{ fontFamily: 'Pretendard, sans-serif', fontWeight: 500, fontSize: 'calc(28.538 / 1920 * 100vw)' }} animate={{ color: selectedCard === index ? '#80FF72' : '#000000' }} transition={{ duration: 0.3, delay: selectedCard === index ? FLIP_DELAY : 0 }}>{position.time}</motion.p>
+            <div aria-hidden="true" className="absolute border-black border-solid inset-0 pointer-events-none" style={{ borderWidth: 'calc(1.75 / 1920 * 100vw)', borderRadius: 'calc(41.584 / 1920 * 100vw)' }} /><motion.p className="leading-[2] not-italic relative shrink-0 text-nowrap tracking-[-0.016vw] whitespace-pre" style={{ fontFamily: 'Pretendard, sans-serif', fontWeight: 500, fontSize: 'calc(28.538 / 1920 * 100vw)' }} animate={{ color: selectedCard === index ? '#80FF72' : '#000000' }} transition={{ duration: 0.4, ease: EASE_SMOOTH, delay: selectedCard === index ? FLIP_DELAY : 0 }}>{position.time}</motion.p>
           </motion.div>
         ))}
       </motion.div>
@@ -416,8 +458,22 @@ function PickContent({ isActive, selectedCard, setSelectedCard }: ContentProps) 
     { left: 'calc(50% + 529.07 / 1692 * 100%)', time: '02:00 Left', width: 'calc(211.819 / 1692 * 100%)', top: 'calc(309.96 / 1080 * 100%)' }
   ], []);
   
+  const prevSelectedCardRef = useRef<number | null>(null);
+  
+  // selectedCard 변경 추적
+  useEffect(() => {
+    prevSelectedCardRef.current = selectedCard;
+  }, [selectedCard]);
+
   const handleCardClick = useCallback((index: number) => {
-    setSelectedCard(selectedCard === index ? null : index);
+    if (selectedCard === index) {
+      // 같은 카드를 다시 클릭하면 바로 닫기
+      setSelectedCard(null);
+    } else {
+      // 새 카드를 먼저 선택 (즉시 플립 시작)
+      setSelectedCard(index);
+      // 기존 카드는 transition의 delay로 자연스럽게 늦게 리셋됨
+    }
   }, [selectedCard, setSelectedCard]);
   return (
     <div className="absolute inset-0" style={{ backgroundImage: isActive ? undefined : "linear-gradient(270deg, rgba(255, 255, 255, 0) 81.811%, rgb(82, 255, 254) 100%), linear-gradient(90deg, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 100%)", backgroundColor: 'white' }}>
@@ -453,10 +509,12 @@ function PickContent({ isActive, selectedCard, setSelectedCard }: ContentProps) 
         {/* Cards */}
         {cardPositions.map((position, index) => {
           const isSelected = selectedCard === index;
+          const wasPreviouslySelected = prevSelectedCardRef.current === index;
+          const isResetting = !isSelected && wasPreviouslySelected;
           const cardImages = pickCardImages[index] || { front: imgCard4, back: imgCard4 };
           return (
-            <motion.div key={`card-${index}`} className="absolute cursor-pointer" style={{ aspectRatio: '454.115 / 554.663', height: 'calc(554.663 / 1080 * 100%)', left: position.left, top: position.top, width: 'calc(454.115 / 1692 * 100%)', borderRadius: 'calc(16.483 / 1920 * 100vw)', zIndex: isSelected ? 30 : 10, perspective: '1000px' }} animate={{ scale: isSelected ? 1.14 : 1, x: '-50%' }} transition={{ duration: FLIP_DURATION, ease: EASE_TV, delay: isSelected ? FLIP_DELAY : 0 }} onClick={() => handleCardClick(index)}>
-              <motion.div className="absolute inset-0" style={{ borderRadius: 'calc(16.483 / 1920 * 100vw)', transformStyle: 'preserve-3d' }} animate={{ rotateY: isSelected ? 180 : 0 }} transition={{ duration: FLIP_DURATION, ease: EASE_TV, delay: isSelected ? FLIP_DELAY : 0 }}>
+            <motion.div key={`card-${index}`} className="absolute cursor-pointer" style={{ aspectRatio: '454.115 / 554.663', height: 'calc(554.663 / 1080 * 100%)', left: position.left, top: position.top, width: 'calc(454.115 / 1692 * 100%)', borderRadius: 'calc(16.483 / 1920 * 100vw)', zIndex: isSelected ? 30 : 10, perspective: '1000px' }} animate={{ scale: isSelected ? 1.14 : 1, x: '-50%' }} transition={{ duration: isSelected ? FLIP_DURATION : FLIP_RESET_DURATION, ease: EASE_SMOOTH, delay: isSelected ? FLIP_DELAY : (isResetting ? FLIP_OLD_CARD_RESET_DELAY : 0) }} onClick={() => handleCardClick(index)}>
+              <motion.div className="absolute inset-0" style={{ borderRadius: 'calc(16.483 / 1920 * 100vw)', transformStyle: 'preserve-3d' }} animate={{ rotateY: isSelected ? 180 : 0 }} transition={{ duration: isSelected ? FLIP_DURATION : FLIP_RESET_DURATION, ease: EASE_SMOOTH, delay: isSelected ? FLIP_DELAY : (isResetting ? FLIP_OLD_CARD_RESET_DELAY : 0) }}>
                 {/* 카드 앞면 이미지 */}
                 <ImageWithErrorHandler 
                   alt={`card-${index}-front`}
@@ -480,8 +538,8 @@ function PickContent({ isActive, selectedCard, setSelectedCard }: ContentProps) 
         
         {/* Time Labels */}
         {cardPositions.map((position, index) => (
-          <motion.div key={`time-${index}`} className="absolute content-stretch flex items-center justify-center px-[2.05%] py-0" style={{ height: 'calc(57 / 1080 * 100%)', left: position.left, top: 'calc(941.5 / 1080 * 100%)', transform: 'translateX(-50%)', width: position.width, borderRadius: 'calc(41.584 / 1920 * 100vw)' }} animate={{ backgroundColor: selectedCard === index ? '#000000' : '#ffffff' }} transition={{ duration: 0.3, delay: selectedCard === index ? FLIP_DELAY : 0 }}>
-            <div aria-hidden="true" className="absolute border-black border-solid inset-0 pointer-events-none" style={{ borderWidth: 'calc(1.75 / 1920 * 100vw)', borderRadius: 'calc(41.584 / 1920 * 100vw)' }} /><motion.p className="leading-[2] not-italic relative shrink-0 text-nowrap tracking-[-0.016vw] whitespace-pre" style={{ fontFamily: 'Pretendard, sans-serif', fontWeight: 500, fontSize: 'calc(28.538 / 1920 * 100vw)' }} animate={{ color: selectedCard === index ? '#4FFFFE' : '#000000' }} transition={{ duration: 0.3, delay: selectedCard === index ? FLIP_DELAY : 0 }}>{position.time}</motion.p>
+          <motion.div key={`time-${index}`} className="absolute content-stretch flex items-center justify-center px-[2.05%] py-0" style={{ height: 'calc(57 / 1080 * 100%)', left: position.left, top: 'calc(941.5 / 1080 * 100%)', transform: 'translateX(-50%)', width: position.width, borderRadius: 'calc(41.584 / 1920 * 100vw)' }} animate={{ backgroundColor: selectedCard === index ? '#000000' : '#ffffff' }} transition={{ duration: 0.4, ease: EASE_SMOOTH, delay: selectedCard === index ? FLIP_DELAY : 0 }}>
+            <div aria-hidden="true" className="absolute border-black border-solid inset-0 pointer-events-none" style={{ borderWidth: 'calc(1.75 / 1920 * 100vw)', borderRadius: 'calc(41.584 / 1920 * 100vw)' }} /><motion.p className="leading-[2] not-italic relative shrink-0 text-nowrap tracking-[-0.016vw] whitespace-pre" style={{ fontFamily: 'Pretendard, sans-serif', fontWeight: 500, fontSize: 'calc(28.538 / 1920 * 100vw)' }} animate={{ color: selectedCard === index ? '#4FFFFE' : '#000000' }} transition={{ duration: 0.4, ease: EASE_SMOOTH, delay: selectedCard === index ? FLIP_DELAY : 0 }}>{position.time}</motion.p>
           </motion.div>
         ))}
       </motion.div>
