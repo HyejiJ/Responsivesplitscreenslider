@@ -18,6 +18,8 @@
         'lucide-react@0.487.0': 'lucide-react',
         'input-otp@1.4.2': 'input-otp',
         'figma:asset/7f12ea1300756f144a0fb5daaf68dbfc01103a46.png': path.resolve(__dirname, './src/assets/7f12ea1300756f144a0fb5daaf68dbfc01103a46.png'),
+        'figma:asset/smart-routine-card.png': path.resolve(__dirname, './src/assets/smart-routine-card.png'),
+        'figma:asset/pick_card_1_front.png': path.resolve(__dirname, './src/assets/pick_card_1_front.png'),
         'embla-carousel-react@8.6.0': 'embla-carousel-react',
         'cmdk@1.1.1': 'cmdk',
         'class-variance-authority@0.7.1': 'class-variance-authority',
