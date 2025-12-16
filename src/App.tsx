@@ -70,6 +70,9 @@ const FLIP_RESET_DURATION = 0.8; // 카드 리셋 애니메이션 지속 시간 
 const FLIP_DELAY = 0; // 카드 플립 시작 지연 시간 (딜레이 없음)
 const FLIP_OLD_CARD_RESET_DELAY = 0; // 새 카드 선택 후 기존 카드 리셋 딜레이 (딜레이 없음, 동시 실행)
 const DRAG_TRANSITION_DELAY = 400; // 드래그 전환 후 카드 리셋 지연 시간 (ms)
+// 인디케이터 설정
+const INDICATOR_SHOW_DELAY = 2000; // 인디케이터 표시 지연 시간 (ms)
+const INDICATOR_DURATION = 3000; // 인디케이터 표시 지속 시간 (ms)
 
 // 부드러운 애니메이션 곡선 (ease-in-out-cubic: 더 부드럽고 자연스러운 전환)
 const EASE_SMOOTH = [0.4, 0.0, 0.6, 1] as const; // ease-in-out-cubic (시작과 끝이 모두 부드러움)
@@ -99,6 +102,8 @@ export default function App() {
   const [activeMode, setActiveMode] = useState<"peek" | "pick">("pick");
   const [peekSelectedCard, setPeekSelectedCard] = useState<number | null>(null);
   const [pickSelectedCard, setPickSelectedCard] = useState<number | null>(null);
+  const [showPeekSwipeIndicator, setShowPeekSwipeIndicator] = useState(true);
+  const [showPickSwipeIndicator, setShowPickSwipeIndicator] = useState(true);
 
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragTransitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -146,6 +151,13 @@ export default function App() {
         clearTimeout(dragTransitionTimerRef.current);
       }
       
+      // Swipe 인디케이터 숨기기
+      if (panel === "pick" && activeMode === "peek") {
+        setShowPeekSwipeIndicator(false);
+      } else if (panel === "peek" && activeMode === "pick") {
+        setShowPickSwipeIndicator(false);
+      }
+      
       if (panel === "pick" && activeMode === "peek") {
         setActiveMode("pick");
         dragTransitionTimerRef.current = setTimeout(() => {
@@ -161,6 +173,7 @@ export default function App() {
       }
     }
   }, [activeMode]);
+
 
   return (
     <div className="relative w-full h-screen bg-black overflow-hidden flex items-center justify-center">
@@ -186,6 +199,68 @@ export default function App() {
               selectedCard={peekSelectedCard}
               setSelectedCard={setPeekSelectedCard}
             />
+
+            {/* Swipe 인디케이터 - Pick에서 Peek으로 (Peek 패널에 표시) */}
+            {activeMode === "pick" && showPickSwipeIndicator && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ 
+                  opacity: 1,
+                  y: 0
+                }}
+                transition={{
+                  duration: 0.3,
+                }}
+                className="absolute pointer-events-none z-50"
+                style={{
+                  display: 'flex',
+                  width: '100%',
+                  height: '100%',
+                  padding: '0 calc(25 / 1920 * 100vw) 0 0',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                }}
+              >
+                <div 
+                  className="flex items-center justify-center"
+                  style={{
+                    padding: 'calc(7 / 1920 * 100vw) calc(18.5 / 1920 * 100vw)',
+                    gap: 'calc(8 / 1920 * 100vw)',
+                    borderRadius: '36.5px',
+                    background: 'linear-gradient(0deg, rgba(8, 229, 0, 0.30) 0%, rgba(8, 229, 0, 0.30) 100%), rgba(255, 255, 255, 0.20)',
+                    backdropFilter: 'blur(4px)',
+                    width: 'auto',
+                  }}
+                >
+                  <span 
+                    className="flex flex-col"
+                    style={{
+                      color: '#008415',
+                      fontFamily: 'Pretendard, sans-serif',
+                      fontSize: 'calc(15.4 / 1920 * 100vw)',
+                      fontWeight: 600,
+                      lineHeight: 'normal',
+                    }}
+                  >
+                    <span>오른쪽으로</span>
+                    <span>밀어보세요</span>
+                  </span>
+                  <div style={{ display: 'flex', gap: 'calc(5 / 1920 * 100vw)' }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none" style={{ width: 'calc(19 / 1920 * 100vw)', height: 'calc(22 / 1920 * 100vw)', transform: 'scaleX(-1)' }}>
+                      <path d="M2.73093e-06 10.825L18.7429 0.00378637L18.7429 21.6463L2.73093e-06 10.825Z" fill="#02AF1E" fillOpacity="1"/>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none" style={{ width: 'calc(19 / 1920 * 100vw)', height: 'calc(22 / 1920 * 100vw)', transform: 'scaleX(-1)' }}>
+                      <path d="M2.73093e-06 10.825L18.7429 0.00378637L18.7429 21.6463L2.73093e-06 10.825Z" fill="#02AF1E" fillOpacity="0.7"/>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none" style={{ width: 'calc(19 / 1920 * 100vw)', height: 'calc(22 / 1920 * 100vw)', transform: 'scaleX(-1)' }}>
+                      <path d="M2.73093e-06 10.825L18.7429 0.00378637L18.7429 21.6463L2.73093e-06 10.825Z" fill="#02AF1E" fillOpacity="0.4"/>
+                    </svg>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+
 
             {activeMode === "pick" && (
               <motion.div
@@ -218,6 +293,67 @@ export default function App() {
               selectedCard={pickSelectedCard}
               setSelectedCard={setPickSelectedCard}
             />
+
+                        {/* Swipe 인디케이터 - Peek에서 Pick으로 (Pick 패널에 표시) */}
+            {activeMode === "peek" && showPeekSwipeIndicator && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ 
+                  opacity: 1,
+                  y: 0
+                }}
+                transition={{
+                  duration: 0.3,
+                }}
+                className="absolute pointer-events-none z-50"
+                style={{
+                  display: 'flex',
+                  width: '100%',
+                  height: '100%',
+                  padding: '0 0 0 calc(25 / 1920 * 100vw)',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                }}
+              >
+                <div 
+                  className="flex items-center justify-center"
+                  style={{
+                    padding: 'calc(7 / 1920 * 100vw) calc(18.5 / 1920 * 100vw)',
+                    gap: 'calc(8 / 1920 * 100vw)',
+                    borderRadius: '36.5px',
+                    background: 'linear-gradient(0deg, rgba(0, 191, 229, 0.30) 0%, rgba(0, 191, 229, 0.30) 100%), rgba(255, 255, 255, 0.20)',
+                    backdropFilter: 'blur(17.100000381469727px)',
+                    width: 'auto',
+                  }}
+                >
+                  <div style={{ display: 'flex', gap: 'calc(5 / 1920 * 100vw)' }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none" style={{ width: 'calc(19 / 1920 * 100vw)', height: 'calc(22 / 1920 * 100vw)' }}>
+                      <path d="M2.73093e-06 10.825L18.7429 0.00378637L18.7429 21.6463L2.73093e-06 10.825Z" fill="#009BBA" fillOpacity="1"/>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none" style={{ width: 'calc(19 / 1920 * 100vw)', height: 'calc(22 / 1920 * 100vw)' }}>
+                      <path d="M2.73093e-06 10.825L18.7429 0.00378637L18.7429 21.6463L2.73093e-06 10.825Z" fill="#009BBA" fillOpacity="0.7"/>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none" style={{ width: 'calc(19 / 1920 * 100vw)', height: 'calc(22 / 1920 * 100vw)' }}>
+                      <path d="M2.73093e-06 10.825L18.7429 0.00378637L18.7429 21.6463L2.73093e-06 10.825Z" fill="#009BBA" fillOpacity="0.4"/>
+                    </svg>
+                  </div>
+                  <span 
+                    className="flex flex-col"
+                    style={{
+                      color: '#03819A',
+                      fontFamily: 'Pretendard, sans-serif',
+                      fontSize: 'calc(15.4 / 1920 * 100vw)',
+                      fontWeight: 600,
+                      lineHeight: 'normal',
+                    }}
+                  >
+                    <span>왼쪽으로</span>
+                    <span>밀어보세요</span>
+                  </span>
+                </div>
+              </motion.div>
+            )}
+
 
             {activeMode === "peek" && (
               <motion.div
@@ -307,9 +443,9 @@ function ImageWithErrorHandler({
 // ============================================================================
 function PeekContent({ isActive, selectedCard, setSelectedCard }: ContentProps) {
   const cardPositions: CardPosition[] = useMemo(() => [
-    { left: 'calc(50% - 532.07 / 1692 * 100%)', time: '00:05 Left', width: 'calc(211.819 / 1692 * 100%)' },
-    { left: 'calc(50% - 1.5 / 1692 * 100%)', time: '00:08 Left', width: 'calc(206.61 / 1692 * 100%)' },
-    { left: 'calc(50% + 529.07 / 1692 * 100%)', time: '00:20 Left', width: 'calc(211.819 / 1692 * 100%)' }
+    { left: 'calc(50% - 532.07 / 1692 * 100%)', time: '00:40 Left', width: 'calc(211.819 / 1692 * 100%)' },
+    { left: 'calc(50% - 1.5 / 1692 * 100%)', time: '01:30 Left', width: 'calc(206.61 / 1692 * 100%)' },
+    { left: 'calc(50% + 529.07 / 1692 * 100%)', time: '02:00 Left', width: 'calc(211.819 / 1692 * 100%)' }
   ], []);
 
   const prevSelectedCardRef = useRef<number | null>(null);
