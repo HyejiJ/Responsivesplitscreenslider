@@ -107,6 +107,8 @@ export default function App() {
 
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragTransitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const peekIndicatorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pickIndicatorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const resetIdleTimer = useCallback(() => {
     if (idleTimerRef.current) {
@@ -118,6 +120,35 @@ export default function App() {
       setPickSelectedCard(null);
       idleTimerRef.current = null;
     }, IDLE_TIMEOUT);
+    
+    // 인디케이터 재표시 타이머 리셋 및 재시작
+    // Peek 인디케이터가 숨겨져 있으면 타이머 리셋 후 재시작
+    setShowPeekSwipeIndicator((prev) => {
+      if (!prev) {
+        if (peekIndicatorTimerRef.current) {
+          clearTimeout(peekIndicatorTimerRef.current);
+        }
+        peekIndicatorTimerRef.current = setTimeout(() => {
+          setShowPeekSwipeIndicator(true);
+          peekIndicatorTimerRef.current = null;
+        }, IDLE_TIMEOUT);
+      }
+      return prev;
+    });
+    
+    // Pick 인디케이터가 숨겨져 있으면 타이머 리셋 후 재시작
+    setShowPickSwipeIndicator((prev) => {
+      if (!prev) {
+        if (pickIndicatorTimerRef.current) {
+          clearTimeout(pickIndicatorTimerRef.current);
+        }
+        pickIndicatorTimerRef.current = setTimeout(() => {
+          setShowPickSwipeIndicator(true);
+          pickIndicatorTimerRef.current = null;
+        }, IDLE_TIMEOUT);
+      }
+      return prev;
+    });
   }, []);
 
   useEffect(() => {
@@ -141,6 +172,14 @@ export default function App() {
         clearTimeout(dragTransitionTimerRef.current);
         dragTransitionTimerRef.current = null;
       }
+      if (peekIndicatorTimerRef.current) {
+        clearTimeout(peekIndicatorTimerRef.current);
+        peekIndicatorTimerRef.current = null;
+      }
+      if (pickIndicatorTimerRef.current) {
+        clearTimeout(pickIndicatorTimerRef.current);
+        pickIndicatorTimerRef.current = null;
+      }
     };
   }, [resetIdleTimer]);
 
@@ -154,8 +193,24 @@ export default function App() {
       // Swipe 인디케이터 숨기기
       if (panel === "pick" && activeMode === "peek") {
         setShowPeekSwipeIndicator(false);
+        // Peek 인디케이터 타이머 리셋하고 1분 후 다시 표시하도록 설정
+        if (peekIndicatorTimerRef.current) {
+          clearTimeout(peekIndicatorTimerRef.current);
+        }
+        peekIndicatorTimerRef.current = setTimeout(() => {
+          setShowPeekSwipeIndicator(true);
+          peekIndicatorTimerRef.current = null;
+        }, IDLE_TIMEOUT);
       } else if (panel === "peek" && activeMode === "pick") {
         setShowPickSwipeIndicator(false);
+        // Pick 인디케이터 타이머 리셋하고 1분 후 다시 표시하도록 설정
+        if (pickIndicatorTimerRef.current) {
+          clearTimeout(pickIndicatorTimerRef.current);
+        }
+        pickIndicatorTimerRef.current = setTimeout(() => {
+          setShowPickSwipeIndicator(true);
+          pickIndicatorTimerRef.current = null;
+        }, IDLE_TIMEOUT);
       }
       
       if (panel === "pick" && activeMode === "peek") {
@@ -216,7 +271,7 @@ export default function App() {
                   display: 'flex',
                   width: '100%',
                   height: '100%',
-                  padding: '0 calc(25 / 1920 * 100vw) 0 0',
+                  padding: '0 calc(22 / 1920 * 100vw) 0 0',
                   justifyContent: 'flex-end',
                   alignItems: 'center',
                 }}
@@ -247,13 +302,13 @@ export default function App() {
                   </span>
                   <div style={{ display: 'flex', gap: 'calc(5 / 1920 * 100vw)' }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none" style={{ width: 'calc(19 / 1920 * 100vw)', height: 'calc(22 / 1920 * 100vw)', transform: 'scaleX(-1)' }}>
-                      <path d="M2.73093e-06 10.825L18.7429 0.00378637L18.7429 21.6463L2.73093e-06 10.825Z" fill="#02AF1E" fillOpacity="1"/>
+                      <path d="M2.73093e-06 10.825L18.7429 0.00378637L18.7429 21.6463L2.73093e-06 10.825Z" fill="#02AF1E" fillOpacity="0.4"/>
                     </svg>
                     <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none" style={{ width: 'calc(19 / 1920 * 100vw)', height: 'calc(22 / 1920 * 100vw)', transform: 'scaleX(-1)' }}>
                       <path d="M2.73093e-06 10.825L18.7429 0.00378637L18.7429 21.6463L2.73093e-06 10.825Z" fill="#02AF1E" fillOpacity="0.7"/>
                     </svg>
                     <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none" style={{ width: 'calc(19 / 1920 * 100vw)', height: 'calc(22 / 1920 * 100vw)', transform: 'scaleX(-1)' }}>
-                      <path d="M2.73093e-06 10.825L18.7429 0.00378637L18.7429 21.6463L2.73093e-06 10.825Z" fill="#02AF1E" fillOpacity="0.4"/>
+                      <path d="M2.73093e-06 10.825L18.7429 0.00378637L18.7429 21.6463L2.73093e-06 10.825Z" fill="#02AF1E" fillOpacity="1"/>
                     </svg>
                   </div>
                 </div>
@@ -310,7 +365,7 @@ export default function App() {
                   display: 'flex',
                   width: '100%',
                   height: '100%',
-                  padding: '0 0 0 calc(25 / 1920 * 100vw)',
+                  padding: '0 0 0 calc(22 / 1920 * 100vw)',
                   justifyContent: 'flex-start',
                   alignItems: 'center',
                 }}
