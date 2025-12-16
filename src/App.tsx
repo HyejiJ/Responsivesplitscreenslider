@@ -307,9 +307,9 @@ function ImageWithErrorHandler({
 // ============================================================================
 function PeekContent({ isActive, selectedCard, setSelectedCard }: ContentProps) {
   const cardPositions: CardPosition[] = useMemo(() => [
-    { left: 'calc(50% - 532.07 / 1692 * 100%)', time: '00:40 Left', width: 'calc(211.819 / 1692 * 100%)' },
-    { left: 'calc(50% - 1.5 / 1692 * 100%)', time: '01:30 Left', width: 'calc(206.61 / 1692 * 100%)' },
-    { left: 'calc(50% + 529.07 / 1692 * 100%)', time: '02:00 Left', width: 'calc(211.819 / 1692 * 100%)' }
+    { left: 'calc(50% - 532.07 / 1692 * 100%)', time: '00:05 Left', width: 'calc(211.819 / 1692 * 100%)' },
+    { left: 'calc(50% - 1.5 / 1692 * 100%)', time: '00:08 Left', width: 'calc(206.61 / 1692 * 100%)' },
+    { left: 'calc(50% + 529.07 / 1692 * 100%)', time: '00:20 Left', width: 'calc(211.819 / 1692 * 100%)' }
   ], []);
 
   const prevSelectedCardRef = useRef<number | null>(null);
