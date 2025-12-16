@@ -11,7 +11,7 @@ import imgCard4 from "figma:asset/7f12ea1300756f144a0fb5daaf68dbfc01103a46.png";
 
 // Pick 페이지 카드 이미지 import
 import pickFront1 from "figma:asset/pick_front_1.png";
-import pickBack1 from "figma:asset/pick_back_1.svg";
+import pickBack1 from "figma:asset/pick_back_1.png";
 import pickFront2 from "figma:asset/pick_front_2.png";
 import pickBack2 from "figma:asset/pick_back_2.png";
 import pickFront3 from "figma:asset/pick_front_3.png";
