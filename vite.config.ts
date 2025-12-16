@@ -20,7 +20,7 @@
         'figma:asset/7f12ea1300756f144a0fb5daaf68dbfc01103a46.png': path.resolve(__dirname, './src/assets/7f12ea1300756f144a0fb5daaf68dbfc01103a46.png'),
         // Pick 페이지 카드 이미지
         'figma:asset/pick_front_1.png': path.resolve(__dirname, './src/assets/pick_front_1.png'),
-        'figma:asset/pick_back_1.svg': path.resolve(__dirname, './src/assets/pick_back_1.svg'),
+        'figma:asset/pick_back_1.png': path.resolve(__dirname, './src/assets/pick_back_1.png'),
         'figma:asset/pick_front_2.png': path.resolve(__dirname, './src/assets/pick_front_2.png'),
         'figma:asset/pick_back_2.png': path.resolve(__dirname, './src/assets/pick_back_2.png'),
         'figma:asset/pick_front_3.png': path.resolve(__dirname, './src/assets/pick_front_3.png'),
